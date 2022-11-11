@@ -1,0 +1,36 @@
+# Please refer https://aka.ms/HTTPSinContainer on how to setup an https developer certificate for your ASP .NET Core service.
+
+version: '3.4'
+
+networks:
+  backend:
+
+services:
+
+  employeedb:
+    container_name: emp-db
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=password@12345#
+    networks:
+      - backend
+    ports:
+      - 18001:1433
+
+  employeeapi:
+    image: employeeapi
+    build:
+      context: .
+      dockerfile: Employee.API/Dockerfile
+    ports:
+      - 8001:8001
+    networks:
+      - backend
+    environment:
+      - DB_HOST=employeedb
+      - DB_NAME=Empdb
+      - DB_SA_PASSWORD=password@12345#
+
+
+  
